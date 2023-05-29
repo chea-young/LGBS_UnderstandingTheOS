@@ -1,0 +1,855 @@
+###Pthreads Example
+#include <pthread.h>
+#include <stdio.h>
+
+#include <stdlib.h>
+
+int sum;
+void *runner(void *param);
+
+int main(int argc, char *argv[])
+{
+	pthread_t tid;
+	pthread_attr_t attr;
+	
+	pthread_attr_init(&attr);
+	pthread_create(&tid, &attr, runner, argv[1]);
+	pthread_join(tid,NULL);
+	
+	printf("SUM = %d\n", sum);
+}
+
+void *runner(void *param)
+{
+	int i, upper = atoi(param);
+	sum = 0;
+	
+	for(i = 0; i <= upper; i++)
+		sum += i;
+		
+	pthread_exit(0);
+}
+
+### Java Threads
+##
+Thread 클래스 상속
+// 쓰레드 구현 방법1 : Thread 클래스 상속
+// MyThread1.java
+public class MyThread1 extends Thread{
+
+	@Override
+	public void run() {
+		try 
+		{
+			while(true)
+			{
+				System.out.println("Hello, Thread!");
+				Thread.sleep(500);
+			}
+		}
+		catch(InterruptedException ie) {
+			System.out.println("I'm interruptedException");
+		}
+	}
+	
+	public static void main(String[] args)
+	{
+		MyThread1 thread = new MyThread1();
+		thread.start();
+		System.out.println("Hello, my child");
+	}
+	
+}
+Hello, my child!
+Hello, Thread!
+...
+...
+Hello, Thread!
+...
+...
+
+2.2 Runnable 인터페이스 구현
+// 쓰레드 구현 방법2 : Runnable 인터페이스 구현
+public class MyThread2 implements Runnable{
+
+	@Override
+	public void run() {
+		try 
+		{
+			while(true)
+			{
+				System.out.println("Hello, Runnable!");
+				Thread.sleep(500);
+			}
+		}
+		catch(InterruptedException ie) {
+			System.out.println("I'm interruptedException");
+		}
+	}
+	
+	public static void main(String[] args)
+	{
+		Thread thread = new Thread(new MyThread2());
+		thread.start();
+		System.out.println("Hello, My Runnable Child");
+	}
+	
+}
+Hello, My Runnable Child
+Hello, Runnable!
+Hello, Runnable!
+Hello, Runnable!
+Hello, Runnable!
+Hello, Runnable!
+...
+
+
+2.3 Runnable 람다 표현식 사용하기
+// 쓰레드 구현 방법3 : Runnable 람다 포현식 사용하기
+public class MyThread3{
+	
+	public static void main(String[] args)
+	{
+		Runnable task = ()->{
+			try 
+			{
+				while(true) 
+				{
+					System.out.println("Hello, Lambda Runnable!");
+					Thread.sleep(500);
+				}
+			}
+			catch(InterruptedException ie)
+			{
+				System.out.println("I'm interrupted");
+			}
+		};
+		
+		Thread thread = new Thread(task);
+		thread.start();
+		System.out.println("Hello, My Lambda Child!");
+	}
+	
+}
+Hello, My Lambda Child!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+
+2.4 부모 쓰레드의 대기 : join
+자식 쓰레드가 종료될때까지 대기했다가 부모 쓰레드의 나머지 명령어를 수행합니다.
+
+// 부모 쓰레드의 대기 : join
+public class MyThread4{
+	
+	public static void main(String[] args)
+	{
+		Runnable task = ()->{
+			for(int i=0;i <5; i++)
+			{
+				System.out.println("Hello, Lambda Runnable!");
+			}
+		};
+		
+		Thread thread = new Thread(task);
+		thread.start();
+		try
+		{
+			thread.join();	// 쓰레드가 종료 될 때가지 wait
+		}
+		catch(InterruptedException ie)
+		{
+			System.out.println("Parent thread is interruped");
+		}
+		System.out.println("Hello, My Joined Child!");
+	}
+	
+}
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, My Joined Child!
+
+
+2.5 쓰레드의 종료
+쓰레드를 명시적으로 종료시킵니다. 그러나 사용하지 않는것을 권고합니다.
+
+// 쓰레드의 종료 : interrupt
+public class MyThread5{
+	
+	public static void main(String[] args) throws InterruptedException
+	{
+		Runnable task = ()->{
+			try
+			{
+				while(true)
+				{
+					System.out.println("Hello, Lambda Runnable!");
+					Thread.sleep(100);
+				}
+			}
+			catch(InterruptedException ie)
+			{
+				System.out.println("I'm Interruped");
+			}
+		};
+		
+		Thread thread = new Thread(task);
+		thread.start();
+		Thread.sleep(500);
+		thread.interrupt();
+		System.out.println("Hello, My Interruped Child!");
+	}	
+}
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, Lambda Runnable!
+Hello, My Interruped Child!
+I'm Interruped
+
+
+
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ cat > omp_1.c
+#include <stdio.h>
+#include <omp.h>
+
+int main(int argc, char *argv[])
+{
+        #pragma omp parallel
+        {
+                printf("There is a parallel region.\n");
+        }
+
+        return 0;
+
+}
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ gcc omp_1.c
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ ./a.out
+There is a parallel region.
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$
+
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ gcc -fopenmp omp_1.c
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ ./a.out
+There is a parallel region.
+There is a parallel region.
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ ./a.out
+There is a parallel region.
+There is a parallel region.
+
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ cat > omp_2.c
+#include <stdio.h>
+#include <time.h>
+#include <omp.h>
+
+#define SIZE 100000000
+
+int a[SIZE], b[SIZE], c[SIZE];
+
+int main(int argc, char *argv[])
+{
+        int i;
+        double start, end;
+
+        //for 루프 시작 시간
+    start = (double)clock() / CLOCKS_PER_SEC;
+
+        for(i=0; i < SIZE; i++){
+                a[i]=b[i]=i;
+        }
+
+        //for 루프 끝난 시간
+    end = (((double)clock()) / CLOCKS_PER_SEC);
+    printf("#pragma omp parallel 안 썼을 때 수행 시간 :%lf\n", (end-start));
+
+        //for 루프 시작 시간
+    start = (double)clock() / CLOCKS_PER_SEC;
+
+    #pragma omp parallel
+    for(i=0; i < SIZE; i++){
+                c[i]=a[i]+b[i];
+        }
+
+        //for 루프 끝난 시간
+    end = (((double)clock()) / CLOCKS_PER_SEC);
+    printf("#pragma omp parallel 썼을 때 수행 시간 :%lf\n", (end-start));
+
+    return 0;
+
+}
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ gcc -fopenmp omp_2.c
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ ./a.out
+#pragma omp parallel 안 썼을 때 수행 시간 :0.000000
+#pragma omp parallel 썼을 때 수행 시간 :2.000000
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$
+
+
+####
+##
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ cat > PthreadScheduling.c
+#include <pthread.h>
+#include <stdio.h>
+
+#define NUM_THREADS 5
+
+void *runner(void *param);
+
+int main(int argc, char *argv[])
+{
+   int i, policy;
+   pthread_t tid[NUM_THREADS];
+   pthread_attr_t attr;
+
+   /* get the default attributes */
+   pthread_attr_init(&attr);
+
+   /* get the current scheduling policy */
+   if (pthread_attr_getschedpolicy(&attr, &policy) != 0)
+   {
+      fprintf(stderr, "Unable to get policy.\n");
+      return 1;
+   }
+   else
+   {
+      if (policy == SCHED_OTHER)
+         printf("SCHED_OTHER\n");
+      else if (policy == SCHED_RR)
+         printf("SCHED_RR\n");
+      else if (policy == SCHED_FIFO)
+         printf("SCHED_FIFO\n");
+   }
+
+   /* set the scheduling policy - FIFO, RR, or OTHER */
+   if (pthread_attr_setschedpolicy(&attr, SCHED_FIFO) != 0)
+   {
+      fprintf(stderr, "Unable to set policy.\n");
+      return 1;
+   }
+
+   /* create the threads */
+   for (i = 0; i < NUM_THREADS; i++)
+   {
+      if (pthread_create(&tid[i], &attr, runner, NULL) != 0)
+      {
+         fprintf(stderr, "Unable to create thread.\n");
+         return 1;
+      }
+   }
+
+   /* now join on each thread */
+   for (i = 0; i < NUM_THREADS; i++)
+   {
+      if (pthread_join(tid[i], NULL) != 0)
+      {
+         fprintf(stderr, "Unable to join thread.\n");
+         return 1;
+      }
+   }
+
+   return 0;
+}
+
+/* Each thread will begin control in this function */
+void *runner(void *param)
+{
+   /* do some work ... */
+   pthread_exit(NULL);
+}
+
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ gcc PthreadScheduling.c
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ ./a.out
+SCHED_OTHER
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$
+#####
+##
+k8s@DESKTOP-R0EQ2U6:~$ cd java_workspaces/
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ cat > RaceCondition1.java
+public class RaceCondition1 {
+    public static void main(String[] args) throws InterruptedException {
+        RunnableOne run1 = new RunnableOne();
+        RunnableOne run2 = new RunnableOne();
+        Thread t1 = new Thread(run1);
+        Thread t2 = new Thread(run2);
+        t1.start(); t2.start();
+        t1.join(); t2.join();
+        System.out.println("Result: " + run1.count + ", " + run2.count);
+    }
+}
+
+class RunnableOne implements Runnable {
+    int count = 0;
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 10000; i++) {
+            count++;
+        }
+    }
+}
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ javac RaceCondition1.java
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java RaceCondition1
+Result: 10000, 10000
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ cat > RaceCondition2.java
+public class RaceCondition2 {
+    public static void main(String[] args) throws InterruptedException {
+        RunnableTwo run1 = new RunnableTwo();
+        RunnableTwo run2 = new RunnableTwo();
+        Thread t1 = new Thread(run1);
+        Thread t2 = new Thread(run2);
+        t1.start(); t2.start();
+        t1.join(); t2.join();
+        System.out.println("Result: " + RunnableTwo.count); // 클래스 멤버 변수
+    }
+}
+
+class RunnableTwo implements Runnable {
+    static int count = 0; // 모든 객체가 공유하는 데이터
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 10000; i++) {
+            count++;
+        }
+    }
+}
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ javac RaceCondition2.java
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java RaceCondition2
+Result: 20000
+k
+
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ cat > Peterson1.java
+public class Peterson1 {
+    static int count = 0; // shared data
+    static int turn = 0;
+    static boolean[] flag = new boolean[2];
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Thread(new Producer());
+        Thread t2 = new Thread(new Consumer());
+        t1.start(); t2.start();
+        t1.join(); t2.join();
+        System.out.println(Peterson1.count);
+    }
+
+    static class Producer implements Runnable{
+        @Override
+        public void run() {
+            for (int i = 0; i < 10000; i++) {
+                // entry section
+                flag[0] = true;
+                turn = 1;
+                while(flag[1] && turn == 1)
+                    ;
+
+                // critical section
+                count++;
+
+                // exit section
+                flag[0] = false;
+
+                // remainder section
+            }
+        }
+    }
+
+    static class Consumer implements Runnable{
+        @Override
+        public void run() {
+            for (int i = 0; i < 10000; i++) {
+                // entry section
+                flag[1] = true;
+                turn = 0;
+                while(flag[0] && turn == 0)
+                    ;
+
+                // critical section
+                count--;
+
+                // exit section
+                flag[1] = false;
+
+                // remainder section
+            }
+        }
+    }
+}
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ javac Peterson1.java
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java Peterson1
+0
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java Peterson1
+0
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java Peterson1
+0
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java Peterson1
+0
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ cat > Peterson2.java
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class Peterson2 {
+    static int count = 0;
+
+    static int turn = 0;
+    static AtomicBoolean[] flag;
+
+    static{
+        flag = new AtomicBoolean[2];
+        for (int i = 0; i < flag.length; i++) {
+            flag[i] = new AtomicBoolean();
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Thread(new Producer());
+        Thread t2 = new Thread(new Consumer());
+        t1.start(); t2.start();
+        t1.join(); t2.join();
+        System.out.println(Peterson2.count);
+    }
+
+    static class Producer implements Runnable {
+        @Override
+        public void run() {
+            for (int i = 0; i < 10000; i++) {
+                // entry section
+                flag[0].set(true);
+                turn = 1;
+                while(flag[1].get() && turn == 1)
+                    ;
+
+                // critical section
+                count++;
+
+                // exit section
+                flag[0].set(false);
+
+                // remainder section
+            }
+        }
+    }
+
+    static class Consumer implements Runnable {
+        @Override
+        public void run() {
+            for (int i = 0; i < 10000; i++) {
+                // entry section
+                flag[1].set(true);
+                turn = 0;
+                while(flag[0].get() && turn == 0)
+                    ;
+
+                // critical section
+                count--;
+
+                // exit section
+                flag[1].set(false);
+
+                // remainder section
+            }
+        }
+    }
+}
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ javac Peterson2.java
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java Peterson2
+0
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java Peterson2
+0
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java Peterson2
+0
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java Peterson2
+0
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ cat > SynchExample1.java
+public class SynchExample1 {
+    static class Counter {
+        public static int count = 0;
+        public static void increment(){
+            count++;
+        }
+    }
+
+    static class MyRunnable implements Runnable {
+        @Override
+        public void run() {
+            for (int i = 0; i < 10000; i++) {
+                Counter.increment();
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread[] threads = new Thread[5];
+
+        for (int i = 0; i < threads.length; i++) {
+            threads[i] = new Thread(new MyRunnable());
+            threads[i].start();
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        System.out.println("counter = " + Counter.count);
+    }
+}
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ javac SynchExample1.java
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java SynchExample1
+counter = 40920
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$
+
+
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ cat > SynchExample2.java
+public class SynchExample2 {
+    static class Counter {
+        public static int count = 0;
+        synchronized public static void increment(){ // 이 부분만 달라짐.
+            count++;
+        }
+    }
+
+    static class MyRunnable implements Runnable {
+        @Override
+        public void run() {
+            for (int i = 0; i < 10000; i++) {
+                Counter.increment();
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread[] threads = new Thread[5];
+
+        for (int i = 0; i < threads.length; i++) {
+            threads[i] = new Thread(new MyRunnable()); // run 메서드 호출
+            threads[i].start();
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        System.out.println("counter = " + Counter.count);
+    }
+}
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ javac SynchExample2.java
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java SynchExample2
+counter = 50000
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ cat > SynchExample3.java
+public class SynchExample3 {
+    static class Counter {
+        private static final Object object = new Object();
+        public static int count = 0;
+        public static void increment(){
+                // 모니터락을 획득할 객체 지정
+            synchronized (object) {
+                count++;
+            }
+        }
+    }
+
+    static class MyRunnable implements Runnable {
+        @Override
+        public void run() {
+            for (int i = 0; i < 10000; i++) {
+                Counter.increment();
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread[] threads = new Thread[5];
+
+        for (int i = 0; i < threads.length; i++) {
+            threads[i] = new Thread(new MyRunnable()); // run 메서드 호출
+            threads[i].start();
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        System.out.println("counter = " + Counter.count);
+    }
+}
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ javac SynchExample3.java
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java SynchExample3
+counter = 50000
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ cat > SynchExample4.java
+public class SynchExample4 {
+    static class Counter {
+        // 5개의 counter 객체가 공유하는 데이터 (static 필수)
+        public static int count = 0;
+        public void increment(){
+            // 자신의 객체 인스턴스가 모니터락을 획득하도록
+            // 그런데, 각 counter 객체가 자신의 모니터를 하나씩 갖고 있으므로
+            // 5개의 스레드가 동기화 되는 게 아니라, 혼자서만 동기화 됨.
+            synchronized (this) {
+                Counter.count++;
+            }
+        }
+    }
+
+    static class MyRunnable implements Runnable {
+        Counter counter;
+        public MyRunnable(Counter counter) {
+            this.counter = counter;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < 10000; i++) {
+                // static 메서드가 아니므로
+                // counter 객체를 생성하여 호출해야 함.
+                counter.increment();
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread[] threads = new Thread[5];
+
+        for (int i = 0; i < threads.length; i++) {
+            // MyRunnable 클래스마다 다른 counter 객체를 가짐.
+            // 그 counter 객체들은 count 변수를 공유함.
+            threads[i] = new Thread(new MyRunnable(new Counter()));
+            threads[i].start();
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        System.out.println("counter = " + Counter.count);
+    }
+}
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ javac SynchExample4.java
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java SynchExample4
+counter = 49099
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ cat > SynchExample5.java
+public class SynchExample5 {
+    static class Counter {
+        public static int count = 0;
+        public void increment(){
+            // counter 객체의 모니터락을 5개의 스레드가 공유함.
+            synchronized (this) {
+                Counter.count++;
+            }
+        }
+    }
+
+    static class MyRunnable implements Runnable {
+       Counter counter;
+        public MyRunnable(Counter counter) {
+            this.counter = counter;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < 10000; i++) {
+                counter.increment();
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread[] threads = new Thread[5]; // 스레드는 5개
+        Counter counter = new Counter(); // counter 객체는 하나
+
+        for (int i = 0; i < threads.length; i++) {
+            threads[i] = new Thread(new MyRunnable(counter));
+            threads[i].start();
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        System.out.println("counter = " + Counter.count);
+    }
+}
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ javac SynchExample5.java
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$ java SynchExample5
+counter = 50000
+k8s@DESKTOP-R0EQ2U6:~/java_workspaces$
+
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ cat > MutexLocks.c
+#include <stdio.h>
+#include <pthread.h>
+
+int sum = 0;  //a shared variable
+
+pthread_mutex_t mutex;
+
+void *counter(void *param)
+{
+        int k;
+        for(k = 0; k < 10000; k++){
+                //entry section
+                pthread_mutex_lock(&mutex);
+
+                //critical section
+                sum++;
+
+                //exit section
+                pthread_mutex_unlock(&mutex);
+
+        }
+        pthread_exit(0);
+}
+
+int main()
+{
+        pthread_t tid1, tid2;
+        pthread_mutex_init(&mutex, NULL);
+        pthread_create(&tid1, NULL, counter, NULL);
+        pthread_create(&tid2, NULL, counter, NULL);
+        pthread_join(tid1, NULL);
+        pthread_join(tid2, NULL);
+
+        printf("SUM = %d\n", sum);
+}
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ gcc -pthread MutexLocks.c
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ ./a.out
+SUM = 20000
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$
+
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ cat > SemaphoresEx1.c
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+
+int sum = 0;  //a shared variable
+
+sem_t sem;
+
+void *counter(void *param)
+{
+        int k;
+        for(k = 0; k < 10000; k++){
+                //entry section
+                sem_wait(&sem);
+
+                //critical section
+                sum++;
+
+                //exit section
+                sem_post(&sem);
+
+        }
+        pthread_exit(0);
+}
+
+int main()
+{
+        pthread_t tid1, tid2;
+        sem_init(&sem, 0, 1);
+        pthread_create(&tid1, NULL, counter, NULL);
+        pthread_create(&tid2, NULL, counter, NULL);
+        pthread_join(tid1, NULL);
+        pthread_join(tid2, NULL);
+
+        printf("SUM = %d\n", sum);
+}
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ gcc -pthread SemaphoresEx1.c
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$ ./a.out
+SUM = 20000
+k8s@DESKTOP-R0EQ2U6:~/c_workspaces$

@@ -1,0 +1,222 @@
+k8s@DESKTOP-R0EQ2U6:~/protection$ whereis python
+python:
+k8s@DESKTOP-R0EQ2U6:~/protection$ python
+Command 'python' not found, did you mean:
+  command 'python3' from deb python3
+  command 'python' from deb python-is-python3
+k8s@DESKTOP-R0EQ2U6:~/protection$ pip3 --version
+Command 'pip3' not found, but can be installed with:
+sudo apt install python3-pip
+k8s@DESKTOP-R0EQ2U6:~/protection$ sudo apt install python3-pip
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  build-essential bzip2 dpkg-dev fakeroot javascript-common libalgorithm-diff-perl libalgorithm-diff-xs-perl
+  libalgorithm-merge-perl libdpkg-perl libexpat1-dev libfakeroot libfile-fcntllock-perl libjs-jquery libjs-sphinxdoc
+  libjs-underscore libpython3-dev libpython3.10-dev lto-disabled-list python3-dev python3-distutils python3-lib2to3
+  python3-setuptools python3-wheel python3.10-dev zlib1g-dev
+Suggested packages:
+
+...
+
+k8s@DESKTOP-R0EQ2U6:~/protection$ pip3 --version
+pip 22.0.2 from /usr/lib/python3/dist-packages/pip (python 3.10)
+k8s@DESKTOP-R0EQ2U6:~/protection$ python3
+Python 3.10.6 (main, Mar 10 2023, 10:55:28) [GCC 11.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> quit()
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat > first_script.py
+#!/usr/bin/env python3
+import sys
+
+print("Output ###: ")
+filereader = open("./first_text.txt", 'r')
+for row in filereader:
+  print(row.strip())
+filereader.close()
+k8s@DESKTOP-R0EQ2U6:~/protection$ python3 first_script.py
+Output ###:
+I'm
+already
+much
+better
+at
+Python.
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat > second_script.py
+#!/usr/bin/env python3
+import sys
+
+print("Output ###: ")
+F1=open("first_text.txt",'r')
+line=F1.readline()
+print(line)
+F1.close()
+k8s@DESKTOP-R0EQ2U6:~/protection$ python3 second_script.py
+Output ###:
+I'm
+
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat > third_script.py
+#!/usr/bin/env python3
+import sys
+
+print("Output ###: ")
+F1=open("first_text.txt",'r')
+while True:
+  line=F1.readline()
+  if not line:
+    break
+  print(line)
+F1.close()
+k8s@DESKTOP-R0EQ2U6:~/protection$ python3 third_script.py
+Output ###:
+I'm
+
+already
+
+much
+
+better
+
+at
+
+Python.
+
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat > four_script.py
+#!/usr/bin/env python3
+import sys
+
+print("Output ###: ")
+F2=open("first_text.txt",'r')
+line=F2.read()
+print(line)
+F2.close()
+k8s@DESKTOP-R0EQ2U6:~/protection$ python3 four_script.py
+Output ###:
+I'm
+already
+much
+better
+at
+Python.
+
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat > five_script.py
+#!/usr/bin/env python3
+import sys
+
+print("Output ###: ")
+F3=open("first_text.txt",'a')
+for i in range(11,20):
+  line = "%d번째 줄입니다. \n" % i
+  F3.write(line)
+F3.close()
+k8s@DESKTOP-R0EQ2U6:~/protection$ python3 five_script.py
+Output ###:
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat first_text.txt
+I'm
+already
+much
+better
+at
+Python.
+11번째 줄입니다.
+12번째 줄입니다.
+13번째 줄입니다.
+14번째 줄입니다.
+15번째 줄입니다.
+16번째 줄입니다.
+17번째 줄입니다.
+18번째 줄입니다.
+19번째 줄입니다.
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat > six_script.py
+#!/usr/bin/env python3
+import sys
+
+print("Output ###: ")
+F4=open("first_text.txt",'r')
+line=F4.read()
+print(line)
+F4.close()
+k8s@DESKTOP-R0EQ2U6:~/protection$ python3 six_script.py
+Output ###:
+I'm
+already
+much
+better
+at
+Python.
+11번째 줄입니다.
+12번째 줄입니다.
+13번째 줄입니다.
+14번째 줄입니다.
+15번째 줄입니다.
+16번째 줄입니다.
+17번째 줄입니다.
+18번째 줄입니다.
+19번째 줄입니다.
+
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat > seven_script.py
+#!/usr/bin/env python3
+import sys
+
+print("Output ###: ")
+F5=open("noWith.txt",'w')
+F5.write("Life is too short, you need python!!!")
+F5.close()
+k8s@DESKTOP-R0EQ2U6:~/protection$ python3 seven_script.py
+Output ###:
+k8s@DESKTOP-R0EQ2U6:~/protection$ ls -al
+total 0
+drwxr-xr-x 1 k8s k8s 512 May 28 21:23 .
+drwxr-x--- 1 k8s k8s 512 May 28 21:06 ..
+-rw-r--r-- 1 k8s k8s 228 May 28 20:22 cs1.txt
+-rw-r--r-- 1 k8s k8s   0 May 28 20:24 cs2.txt
+-rw-r--r-- 1 k8s k8s 290 May 28 21:07 first_script.py
+-rw-r--r-- 1 k8s k8s 255 May 28 21:19 first_text.txt
+-rw-r--r-- 1 k8s k8s 179 May 28 21:19 five_script.py
+-rw-r--r-- 1 k8s k8s 125 May 28 21:16 four_script.py
+-rw-r--r-- 1 k8s k8s  37 May 28 21:23 noWith.txt
+-rw-r--r-- 1 k8s k8s 256 May 28 21:11 second_script.py
+-rw-r--r-- 1 k8s k8s 144 May 28 21:23 seven_script.py
+-rw-r--r-- 1 k8s k8s 125 May 28 21:21 six_script.py
+-rw-r--r-- 1 k8s k8s 297 May 28 21:12 third_script.py
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat noWith.txt
+Life is too short, you need python!!!
+
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat > eight_script.py
+#!/usr/bin/env python3
+import sys
+
+print("Output ###: ")
+with open("With.txt",'w') as F6:
+  F6.write("Life is too short, you need python!!!")
+k8s@DESKTOP-R0EQ2U6:~/protection$ python3 eight_script.py
+Output ###:
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat With.txt
+Life is too short, you need python!!!
+
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat > nine_script.py
+#!/usr/bin/env python3
+import sys
+
+print("Output ###: ")
+my_letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+max_index = len(my_letters)
+filewriter = open("second_text.txt", 'w')
+for index_value in range(len(my_letters)):
+  if index_value < (max_index-1):
+    filewriter.write(my_letters[index_value]+'\t')
+  else:
+      filewriter.write(my_letters[index_value]+'\n')
+filewriter.close()
+print("Output ###: Output written to file")
+k8s@DESKTOP-R0EQ2U6:~/protection$ python3 nine_script.py
+Output ###:
+Output ###: Output written to file
+k8s@DESKTOP-R0EQ2U6:~/protection$ cat second_text.txt
+a       b       c       d       e       f       g       h       i       j
+k8s@DESKTOP-R0EQ2U6:~/protection$
+
+
+
+
