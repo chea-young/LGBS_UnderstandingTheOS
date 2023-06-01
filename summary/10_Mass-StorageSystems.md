@@ -46,7 +46,26 @@
     - ROM에는 위치만 저장 
 
 ### Swap-Space Management
+### Storage Attachment
+**스토리지 첨부 파일**
+**네트워크 연결 스토리지**
+- NAS: master node 1대, data node 2대로 구성
+**Cloud Storage**
+**Storage Area Network**
+- SAN
+  - 네트워크로 구성되어서 토폴로지가 필요
 
+### RAID Structure
+- 스트라이핑: 여러 개를 가지고 하나처럼 쓸 수 있도록 하는 것
+- Block interleaved parity: 11번째에 패리티에 대한 블록게 대한 디스크를 이용
+  - 6: 패리티를 하나만 쓰는게 아니라 서로 다른 패리티 2개(P 패리티, Q 패리티)를 사용
+- 구성을 다양하게 가능
+**RAID Levels**
+
+  <img src="image/RAID.PNG" title="Github_Logo"/>
+
+  - non-redundant striping: 하나도 중복되지 않고 나열되어 있는 것
+  
 #### ++
 - OS에서 RR & priority 스케줄링 사용
 - paging에서는 LRU 사용
