@@ -35,7 +35,27 @@
 - Consumer: 값을 감소 시켜주는 thread
 
 ### Synchronization Hardware
+#### 원자 변수 atomic variable
+- waiting 상태에 있다가 풀리면 처리를 하는 방식으로 진행.
+
+### Semaphore
+#### EX with Semaphores
+- 상호배제 효과를 얻음
+- critical section 문제 해결
+
+### Monitor
+#### 세마포어를 사용하여 구현 모니터링
+
+### Liveness
+- 모니터의 단일 리소스를 할당하고자 하는 것
+
+## Kubernetes scheduling (REF. 2일차 오후.pdf)
+### Kubernetes 클러스터
+- master node와 worker node들로 구성되어 있는 클러스트 존재
+### Advanced scheduling
+- `nodeSelector`라는 node를 선택해서 해당 node에 올라가도록 하는 방식을 선택함
 - 
 
 #### ++
 - heap영역에 들어가면 mutable될 가능성이 높음
+- remainder section는 false로 해놓고 처리를 하는 것
